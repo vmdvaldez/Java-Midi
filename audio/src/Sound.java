@@ -36,8 +36,7 @@ public class Sound
 		} catch (Exception e) {e.printStackTrace();}
 
 	}
-	
-	
+		
 	public static void print_dict(Map<?,?> m) {
 		for (Map.Entry<?,?> x : m.entrySet()) {
 			String key = (String) x.getKey();
@@ -46,6 +45,13 @@ public class Sound
 		}
 	}
 	
+	
+	/**
+	 * @param channel;		each channel has an instrument, note, velocity, pitch ... etc.
+	 * @param bank;			bank is a collection of patches or presets. (i.e. bank  #1 has multiple instruments (a.k.a patches)
+	 * @param patch;		patch is the instrument number.
+	 * @param synth;		Synthesizer contains multiple channels.
+	 * */
 	
 	public static void change_instrument(Integer channel, Integer bank, Integer patch, Synthesizer synth) {
 		// NEED TO LOAD IF NEEDED
@@ -63,6 +69,7 @@ public class Sound
 
 	}
 	
+
 	public static void main(String args[]){
 		
 		Sound test = new Sound();
@@ -89,13 +96,12 @@ public class Sound
 			
 			System.out.println(m_channel[0].getController(0));
 			
-			change_instrument(0, 640, 124, synth);
+			// channel, bank, patch, synth
+			change_instrument(0, 1024, 24, synth);
 			
 			
-			Integer x = 60;
 			for (Integer i = 0; i < 1; i++) {
 				m_channel[0].noteOn(test.note_mapper.get("C4"), 1000);
-				x += 5;
 				Thread.sleep(5000);
 			}
 
