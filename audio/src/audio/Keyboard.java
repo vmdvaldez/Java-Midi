@@ -1,16 +1,20 @@
+package audio;
 
-import java.awt.*;
 import java.awt.event.*;
-
-
 import javax.swing.*;
 
 
-public class Keyboard extends KeyAdapter{
+public class Keyboard extends KeyAdapter implements KeyToSound, Runnable{
 	
 	public Keyboard() {
 		
 	}
+	
+	public Boolean insert(char c) {return buffer.add(c);}
+	public Character read() {return buffer.remove();}
+	public Character peek() {return buffer.peek();}
+
+	
 	
 	@Override
 	public void keyReleased(KeyEvent e) {}
@@ -24,6 +28,8 @@ public class Keyboard extends KeyAdapter{
 		switch(e.getKeyCode()) {
 		
 			case KeyEvent.VK_A:
+				this.insert('A');
+				System.out.println(this.buffer);
 				System.out.println("A pressed");
 				break;
 			case KeyEvent.VK_B:
@@ -137,7 +143,8 @@ public class Keyboard extends KeyAdapter{
 		
 	}
 	
-	public static void main(String[] args) {
+	public void run() {
+		
 		JFrame frame = new JFrame("Test");
 //		frame.pack();
 //		frame.setSize(new Dimension(300,200));

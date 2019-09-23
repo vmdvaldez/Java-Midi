@@ -1,3 +1,5 @@
+package audio;
+
 import java.io.*;
 import javax.sound.midi.*;
 import java.util.*;
@@ -5,15 +7,16 @@ import java.util.*;
 
 
 
-public class Sound
+public class Sound implements Runnable
 {
 	Map<String, Integer> note_mapper = null;
 	Map<Integer, String> reverse_note_mapper = null;
+	KeyToSound k2s = null;
 	
-	
-	public Sound() {
+	public Sound(KeyToSound k2s_) {
 		note_mapper = new HashMap<String, Integer>();
 		reverse_note_mapper = new HashMap<Integer, String>();
+		k2s = k2s_;
 		String f_name = "Notes/mapper.txt";
 		
 		
@@ -69,8 +72,52 @@ public class Sound
 
 	}
 	
+	public void keyboard_read() {
+		char x = k2s.read();
+		System.out.println(x);
+	}
 
-	public static void main(String args[]){
+	public void run() {
+//		while(true) {			
+//			try {
+//			System.out.println("sound"); 
+//			Thread.sleep(1000);}
+//			catch(Exception e){}
+//			}
+		
+			try {
+				Synthesizer synth = MidiSystem.getSynthesizer();
+				synth.open();
+				
+				MidiChannel[] m_channel = synth.getChannels();
+			
+					System.out.println(k2s);
+					System.out.println(k2s.buffer);
+					
+					while(true) {
+						Character note = k2s.peek();
+						if(note == null) {
+							System.out.println("NULL");
+							continue;
+						}
+						String s = k2s.read()  + "5";
+						
+						m_channel[0].noteOn(this.note_mapper.get(s), 1000);
+//						m_channel[0].noteOff(this.note_mapper.get(s), 1000);
+					}
+						
+				}catch (Exception e) { e.printStackTrace(); }			
+		
+
+		
+
+			
+		
+		
+		
+	}
+	
+	public void main(String args[]){
 		
 		Sound test = new Sound();
 		
