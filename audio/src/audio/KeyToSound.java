@@ -9,7 +9,7 @@ public interface KeyToSound {
 	Lock lock = new ReentrantLock();
 	Condition c_buffer = lock.newCondition();
 	
-	public Boolean insert(char c);
+	public Boolean insert(String s);
 	public String read();
 	public String peek();
 	

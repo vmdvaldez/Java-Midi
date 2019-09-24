@@ -109,13 +109,6 @@ public class Sound implements Runnable
 						
 				}catch (Exception e) { e.printStackTrace(); }			
 		
-
-		
-
-			
-		
-		
-		
 	}
 	
 
