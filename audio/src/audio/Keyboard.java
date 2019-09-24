@@ -6,13 +6,13 @@ import javax.swing.*;
 
 public class Keyboard extends KeyAdapter implements KeyToSound, Runnable{
 	
+	
 	public Keyboard() {
-		
 	}
 	
-	public Boolean insert(char c) {return buffer.add(c);}
-	public Character read() {return buffer.remove();}
-	public Character peek() {return buffer.peek();}
+	public Boolean insert(String s) {return buffer.add(s);}
+	public String read() {return buffer.remove();}
+	public String peek() {return buffer.peek();}
 
 	
 	
@@ -28,8 +28,11 @@ public class Keyboard extends KeyAdapter implements KeyToSound, Runnable{
 		switch(e.getKeyCode()) {
 		
 			case KeyEvent.VK_A:
-				this.insert('A');
-				System.out.println(this.buffer);
+				lock.lock();
+				this.insert("A5");
+				System.out.println(buffer);
+				c_buffer.signal();
+				lock.unlock();
 				System.out.println("A pressed");
 				break;
 			case KeyEvent.VK_B:
@@ -155,6 +158,12 @@ public class Keyboard extends KeyAdapter implements KeyToSound, Runnable{
 		
 		while(true);
 
+	}
+
+	@Override
+	public Boolean insert(char c) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

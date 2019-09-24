@@ -1,15 +1,17 @@
 package audio;
-
+import java.util.concurrent.locks.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public interface KeyToSound {
 	
-	Queue<Character> buffer = new LinkedList<Character>();
+	Queue<String> buffer = new LinkedList<String>();
+	Lock lock = new ReentrantLock();
+	Condition c_buffer = lock.newCondition();
 	
 	public Boolean insert(char c);
-	public Character read();
-	public Character peek();
+	public String read();
+	public String peek();
 	
 	
 }

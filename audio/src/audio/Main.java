@@ -1,9 +1,11 @@
 package audio;
 
 
+
 public class Main {
 
 	public static void main(String[] args) {
+
 		Keyboard k = new Keyboard();
 		System.out.println(k);
 		Thread keyboard = new Thread(k);
@@ -11,6 +13,10 @@ public class Main {
 		keyboard.start();
 		sound.start();
 		
+		try {
+			keyboard.join();
+			sound.join();
+		}catch(Exception e) {e.printStackTrace();}
 	
 		
 		

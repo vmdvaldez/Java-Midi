@@ -73,7 +73,7 @@ public class Sound implements Runnable
 	}
 	
 	public void keyboard_read() {
-		char x = k2s.read();
+		String x = k2s.read();
 		System.out.println(x);
 	}
 
@@ -92,18 +92,19 @@ public class Sound implements Runnable
 				MidiChannel[] m_channel = synth.getChannels();
 			
 					System.out.println(k2s);
-					System.out.println(k2s.buffer);
+					System.out.println(KeyToSound.buffer);
+					
 					
 					while(true) {
-						Character note = k2s.peek();
-						if(note == null) {
-							System.out.println("NULL");
-							continue;
-						}
-						String s = k2s.read()  + "5";
+						KeyToSound.lock.lock();
+						while(k2s.peek() == null) 
+							KeyToSound.c_buffer.await();
+						
+						
+						String s = k2s.read();
+						KeyToSound.lock.unlock();
 						
 						m_channel[0].noteOn(this.note_mapper.get(s), 1000);
-//						m_channel[0].noteOff(this.note_mapper.get(s), 1000);
 					}
 						
 				}catch (Exception e) { e.printStackTrace(); }			
@@ -116,48 +117,6 @@ public class Sound implements Runnable
 		
 		
 	}
-	
-	public void main(String args[]){
-		
-		Sound test = new Sound();
-		
-//		print_dict(test.note_mapper);
-
-		try {
-			Synthesizer synth = MidiSystem.getSynthesizer();
-			synth.open();
-			
-			MidiChannel[] m_channel = synth.getChannels();
-			Instrument[] m_instr = synth.getAvailableInstruments();
-			
-			for(Instrument i : m_instr)
-				System.out.println(i);
-//			
-			
-//			System.out.println("Number of Channels: " + m_channel.length);
-//			
-//			Receiver rec = synth.getReceiver();
-//			
-//			rec.send(new ShortMessage(ShortMessage.PROGRAM_CHANGE, 0, 109, 0), -1);
-			
-			
-			System.out.println(m_channel[0].getController(0));
-			
-			// channel, bank, patch, synth
-			change_instrument(0, 1024, 24, synth);
-			
-			
-			for (Integer i = 0; i < 1; i++) {
-				m_channel[0].noteOn(test.note_mapper.get("C4"), 1000);
-				Thread.sleep(5000);
-			}
-
-			
-		}catch (Exception e) { e.printStackTrace(); }
-		
-		
-	}
-	
 	
 
 		
