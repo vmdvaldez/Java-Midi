@@ -4,7 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-public class Keyboard extends KeyAdapter implements KeyToSound, Runnable{
+public class Keyboard  implements KeyToSound{
 	
 	
 	public Keyboard() {
@@ -14,175 +14,130 @@ public class Keyboard extends KeyAdapter implements KeyToSound, Runnable{
 	public String read() {return buffer.remove();}
 	public String peek() {return buffer.peek();}
 
-	
-	
-	@Override
-	public void keyReleased(KeyEvent e) {}
-	
-	@Override
-	public void keyTyped(KeyEvent e) {}
-	
-	@Override
-	public void keyPressed(KeyEvent e)
+
+	public void map2sound(String key)
 	{
 		lock.lock();
-		
 		String note = null;
-		
 		System.out.println(buffer);
-		switch(e.getKeyCode()) {
+		System.out.println(key);
+		switch(key) {
 		
-			case KeyEvent.VK_A:
-				System.out.println("A pressed");
+			case "a":
 				break;
-			case KeyEvent.VK_B:
+			case "b":
 				note = "G4";
 				break;
-			case KeyEvent.VK_C:
-				System.out.println("C pressed");
+			case "c":
 				note = "E4";
 				break;
-			case KeyEvent.VK_D:
+			case "d":
 				note = "D#4";
-				System.out.println("D pressed");
 				break;
-			case KeyEvent.VK_E:
+			case "e":
 				note = "E5";
-				System.out.println("E pressed");
 				break;
-			case KeyEvent.VK_F:
-				System.out.println("F pressed");
+			case "f":
 				break;
-			case KeyEvent.VK_G:
+			case "g":
 				note = "F#4";
-				System.out.println("G pressed");
 				break;
-			case KeyEvent.VK_H:
+			case "h":
 				note = "G#4";
-				System.out.println("H pressed");
 				break;
-			case KeyEvent.VK_I:
+			case "i":
 				note = "C6";
-				System.out.println("I pressed");
 				break;
-			case KeyEvent.VK_J:
+			case "j":
 				note = "A#4";
-				System.out.println("J pressed");
 				break;
-			case KeyEvent.VK_K:
-				System.out.println("K pressed");
+			case "k":
 				break;
-			case KeyEvent.VK_L:
+			case "l":
 				note = "C#5";
-				System.out.println("L pressed");
 				break;
-			case KeyEvent.VK_M:
+			case "m":
 				note = "B4";
-				System.out.println("M pressed");
 				break;
-			case KeyEvent.VK_N:
+			case "n":
 				note = "A4";
-				System.out.println("N pressed");
 				break;
-			case KeyEvent.VK_O:
+			case "o":
 				note = "D6";
-				System.out.println("O pressed");
 				break;
-			case KeyEvent.VK_P:
+			case "p":
 				note = "E6";
-				System.out.println("P pressed");
 				break;
-			case KeyEvent.VK_Q:
+			case "q":
 				note = "C5";
-				System.out.println("Q pressed");
 				break;
-			case KeyEvent.VK_R:
+			case "r":
 				note = "F5";
-				System.out.println("R pressed");
 				break;
-			case KeyEvent.VK_S:
+			case "s":
 				note = "C#4";
-				System.out.println("S pressed");
 				break;
-			case KeyEvent.VK_T:
+			case "t":
 				note = "G5";	
-				System.out.println("T pressed");
 				break;
-			case KeyEvent.VK_U:
+			case "u":
 				note = "B5";
-				System.out.println("U pressed");
 				break;
-			case KeyEvent.VK_V:
+			case "v":
 				note = "F4";
-				System.out.println("V pressed");
 				break;
-			case KeyEvent.VK_W:
+			case "w":
 				note = "D5";
-				System.out.println("W pressed");
 				break;
-			case KeyEvent.VK_X:
+			case "x":
 				note = "D4";
-				System.out.println("X pressed");
 				break;
-			case KeyEvent.VK_Y:
+			case "y":
 				note = "A5";
-				System.out.println("Y pressed");
 				break;
-			case KeyEvent.VK_Z:
+			case "z":
 				note = "C4";
-				System.out.println("Z pressed");
 				break;
-			case KeyEvent.VK_1:
-				System.out.println("1 pressed");
+			case "1":
 				break;
-			case KeyEvent.VK_2:
+			case "2":
 				note = "C#5";
-				System.out.println("2 pressed");
 				break;
-			case KeyEvent.VK_3:
+			case "3":
 				note = "D#5";
-				System.out.println("3 pressed");
 				break;
-			case KeyEvent.VK_4:
-				System.out.println("4 pressed");
+			case "4":
 				break;
-			case KeyEvent.VK_5:
+			case "5":
 				note = "F#5";
-				System.out.println("5 pressed");
 				break;
-			case KeyEvent.VK_6:
+			case "6":
 				note = "G#5";
-				System.out.println("6 pressed");
 				break;
-			case KeyEvent.VK_7:
+			case "7":
 				note = "A#5";
-				System.out.println("7 pressed");
 				break;
-			case KeyEvent.VK_8:
-				System.out.println("8 pressed");
+			case "8":
 				break;
-			case KeyEvent.VK_9:
+			case "9":
 				note = "C#6";
-				System.out.println("9 pressed");
 				break;
-			case KeyEvent.VK_0:
+			case "0":
 				note = "D#6";
-				System.out.println("0 pressed");
 				break;
-			case KeyEvent.VK_COMMA:
+			case ",":
 				note = "C5";
-				System.out.println(", pressed");
 				break;
-			case KeyEvent.VK_PERIOD:
+			case ".":
 				note = "D5";
 				break;
-			case KeyEvent.VK_BACK_SLASH:
+			case "/":
 				note = "E5";
 				break;
-			case KeyEvent.VK_OPEN_BRACKET:
+			case "[":
 				note = "F6";
 				break;
-			case KeyEvent.VK_CLOSE_BRACKET:
+			case "]":
 				note = "G6";
 				break;
 			
@@ -198,15 +153,4 @@ public class Keyboard extends KeyAdapter implements KeyToSound, Runnable{
 		lock.unlock();
 	}
 	
-	public void run() {
-		
-		JFrame frame = new JFrame("Test");
-//		frame.pack();
-//		frame.setSize(new Dimension(300,200));
-		frame.setVisible(true);
-		Keyboard test = new Keyboard();
-		frame.addKeyListener(test);
-		
-	}
-
 }

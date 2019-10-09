@@ -19,7 +19,7 @@ public class Sound implements Runnable
 		k2s = k2s_;
 		String f_name = "Notes/mapper.txt";
 		
-		
+		// Read file to get note mappings (populate HashMaps)
 		try {
 			File file = new File(f_name);
 			FileReader f_reader = new FileReader(file);
@@ -40,14 +40,7 @@ public class Sound implements Runnable
 
 	}
 		
-	public static void print_dict(Map<?,?> m) {
-		for (Map.Entry<?,?> x : m.entrySet()) {
-			String key = (String) x.getKey();
-			
-			System.out.println(key + ":" + (Integer)x.getValue());
-		}
-	}
-	
+
 	
 	/**
 	 * @param channel;		each channel has an instrument, note, velocity, pitch ... etc.
@@ -69,50 +62,44 @@ public class Sound implements Runnable
 			rec.send(new ShortMessage(ShortMessage.CONTROL_CHANGE, channel, 32, bank & 0x7F), -1);
 			rec.send(new ShortMessage(ShortMessage.PROGRAM_CHANGE, channel, patch, 0), -1);
 		} catch (Exception e) {e.printStackTrace();}
-
 	}
 	
-	public void keyboard_read() {
-		String x = k2s.read();
-		System.out.println(x);
-	}
-
 	public void run() {
-//		while(true) {			
-//			try {
-//			System.out.println("sound"); 
-//			Thread.sleep(1000);}
-//			catch(Exception e){}
-//			}
-		
-			try {
-				Synthesizer synth = MidiSystem.getSynthesizer();
-				synth.open();
-				
-				MidiChannel[] m_channel = synth.getChannels();
+
+		try {
+			Synthesizer synth = MidiSystem.getSynthesizer();
+			synth.open();
 			
-					System.out.println(k2s);
-					System.out.println(KeyToSound.buffer);
+			MidiChannel[] m_channel = synth.getChannels();
+		
+				System.out.println(k2s);
+				System.out.println(KeyToSound.buffer);
+				
+				
+				while(true) {
+					KeyToSound.lock.lock();
+					while(k2s.peek() == null) 
+						KeyToSound.c_buffer.await();
 					
 					
-					while(true) {
-						KeyToSound.lock.lock();
-						while(k2s.peek() == null) 
-							KeyToSound.c_buffer.await();
-						
-						
-						String s = k2s.read();
-						KeyToSound.lock.unlock();
-						
-						m_channel[0].noteOn(this.note_mapper.get(s), 1000);
-					}
-						
-				}catch (Exception e) { e.printStackTrace(); }			
+					String s = k2s.read();
+					KeyToSound.lock.unlock();
+					
+					m_channel[0].noteOn(this.note_mapper.get(s), 1000);
+				}
+					
+			}catch (Exception e) { e.printStackTrace(); }			
 		
 	}
 	
 
-		
-	
-	
+	// FOR DEBUGGING
+
+	public static void print_dict(Map<?,?> m) {
+		for (Map.Entry<?,?> x : m.entrySet()){
+			String key = (String) x.getKey();
+			System.out.println(key + ":" + (Integer)x.getValue());
+		}
+	}
+
 }
