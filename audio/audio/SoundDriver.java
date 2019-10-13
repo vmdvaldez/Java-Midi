@@ -3,7 +3,7 @@ import java.util.concurrent.locks.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public interface KeyToSound {
+public interface SoundDriver {
 	
 	Queue<String> buffer = new LinkedList<String>();
 	Lock lock = new ReentrantLock();

@@ -4,7 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-public class Keyboard  implements KeyToSound{
+public class Keyboard  implements SoundDriver{
 	
 	
 	public Keyboard() {

@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.collections.ObservableList; 
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.input.KeyEvent;
@@ -19,8 +20,10 @@ import javafx.scene.input.KeyEvent;
 public class Gui extends Application implements Runnable{
 	
 	private Keyboard keyboard = new Keyboard();
+	private Sound midi = new Sound(keyboard);
 
 	public Keyboard get_keyboard(){return this.keyboard;}
+	public Sound get_midi(){return this.midi;}
 
 	private void key_handler(KeyEvent event){
 		// System.out.println(event.getText());
@@ -56,6 +59,9 @@ public class Gui extends Application implements Runnable{
 		// list.add(drop_down);
 
 
+
+
+
 		// Using GRID
 		GridPane gpane = new GridPane();
 		gpane.setPadding(new Insets(20,20,20,20));
@@ -65,7 +71,11 @@ public class Gui extends Application implements Runnable{
 
 		
 
-		Scene scene = new Scene(gpane, 900, 600);
+		BorderPane root_bpane = new BorderPane();
+
+		root_bpane.setLeft(gpane);
+
+		Scene scene = new Scene(root_bpane, 900, 600);
 		main.setTitle("Music Application");
 		main.setScene(scene);
 		main.show();

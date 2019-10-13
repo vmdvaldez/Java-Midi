@@ -11,9 +11,9 @@ public class Sound implements Runnable
 {
 	Map<String, Integer> note_mapper = null;
 	Map<Integer, String> reverse_note_mapper = null;
-	KeyToSound k2s = null;
+	SoundDriver k2s = null;
 	
-	public Sound(KeyToSound k2s_) {
+	public Sound(SoundDriver k2s_) {
 		note_mapper = new HashMap<String, Integer>();
 		reverse_note_mapper = new HashMap<Integer, String>();
 		k2s = k2s_;
@@ -73,17 +73,17 @@ public class Sound implements Runnable
 			MidiChannel[] m_channel = synth.getChannels();
 		
 				System.out.println(k2s);
-				System.out.println(KeyToSound.buffer);
+				System.out.println(SoundDriver.buffer);
 				
 				
 				while(true) {
-					KeyToSound.lock.lock();
+					SoundDriver.lock.lock();
 					while(k2s.peek() == null) 
-						KeyToSound.c_buffer.await();
+						SoundDriver.c_buffer.await();
 					
 					
 					String s = k2s.read();
-					KeyToSound.lock.unlock();
+					SoundDriver.lock.unlock();
 					
 					m_channel[0].noteOn(this.note_mapper.get(s), 1000);
 				}
