@@ -12,6 +12,7 @@ public class Sound implements Runnable
 	// NOTE MAPPING DATA-STRUCTURES
 	Map<String, Integer> note_mapper = null;
 	Map<Integer, String> reverse_note_mapper = null;
+	Map<String, Integer[]> inst_bank_preset = null;
 	SoundDriver k2s = null;
 	
 	// MIDI SPECIFIC VARIABLES
@@ -52,12 +53,33 @@ public class Sound implements Runnable
 
 
 		threads.add(new Thread(()->{
+			inst_bank_preset = new HashMap<String, Integer[]>();
 			try{
 				this.synth = MidiSystem.getSynthesizer();
 				this.m_channel = synth.getChannels();
 				this.instruments = synth.getAvailableInstruments();
 
 				print_instruments();
+				Integer[] bank_preset = new Integer[2];
+				for (Instrument i : instruments){
+					String [] parsed = i.toString().split(" ");
+					int index = 0;
+					for(String word : parsed){
+						// System.out.println(word);
+						if (word.charAt(0) == '#'){
+							bank_preset[index] = Integer.parseInt(word.replace("#",""));
+							// System.out.println(bank_preset[index]);
+							index ++;
+						}
+					}
+					System.out.println(i.getName());
+					System.out.println("bank #: " + bank_preset[0] + "\t" + "preset #: " + bank_preset[1]);
+
+					inst_bank_preset.put(i.getName(), bank_preset);
+				}
+
+				// print_inst_mapping();
+				
 			}catch(Exception e){ e.printStackTrace();}
 		}));
 		
@@ -135,7 +157,17 @@ public class Sound implements Runnable
 	public void print_instruments(){
 		System.out.println("Total Instruments: " + instruments.length);
 		for (Instrument i : instruments)
-			System.out.println(i);
+			System.out.println(i.toString());
+
+
 	}
 
+	public void print_inst_mapping(){
+			for (Map.Entry<String,Integer[]> x : inst_bank_preset.entrySet()){
+				String key = (String) x.getKey();
+				System.out.println(key);
+				System.out.println(x.getValue()[0]);
+				System.out.println(x.getValue()[1]);
+		}
+	}
 }
