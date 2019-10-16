@@ -22,12 +22,13 @@ public class Gui extends Application implements Runnable{
 	private Keyboard keyboard = new Keyboard();
 	private Sound midi = new Sound(keyboard);
 
-	public Keyboard get_keyboard(){return this.keyboard;}
-	public Sound get_midi(){return this.midi;}
+	// public Keyboard get_keyboard(){return this.keyboard;}
+	// public Sound get_midi(){return this.midi;}
 
-	private void key_handler(KeyEvent event){
-		// System.out.println(event.getText());
-		keyboard.map2sound(event.getText());
+	private void key_handler(KeyEvent event){keyboard.map2sound(event.getText());}
+
+	private void drop_down_handler(ActionEvent event){
+		System.out.println("test");
 	}
 
 	private Text create_text(int fsize, double xloc, double yloc, String text){
@@ -39,16 +40,19 @@ public class Gui extends Application implements Runnable{
 	@Override
 	public void start(Stage main){
 		
-		// Create Text
-		// Text text = new Text();
-		// text.setFont(new Font(45));
-		// text.setX(50);
-		// text.setY(150);
-		// text.setText("testing");
+		Thread sound = new Thread(midi);
+		sound.start();
 
 		Text text = this.create_text(15, 0, 0, "Instrument: ");
 		ComboBox drop_down = new ComboBox();
 		drop_down.getItems().addAll("test1","test2","test3");
+		drop_down.getSelectionModel().selectFirst();
+
+		drop_down.setOnAction((event) -> {
+			// System.out.println(drop_down.getSelectionModel().getSelectedItem().getClass());
+			String s = drop_down.getSelectionModel().getSelectedItem().getClass().toString();
+			System.out.println(s);
+		});
 		
 		// add Text to Group and create scene
 		
@@ -57,9 +61,6 @@ public class Gui extends Application implements Runnable{
 		// list.add(text);
 		// list.add(text2);
 		// list.add(drop_down);
-
-
-
 
 
 		// Using GRID
@@ -82,6 +83,7 @@ public class Gui extends Application implements Runnable{
 
 
 		scene.addEventHandler(KeyEvent.KEY_PRESSED, this::key_handler);
+		
 
 
 	}

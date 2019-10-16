@@ -9,34 +9,68 @@ import java.util.*;
 
 public class Sound implements Runnable
 {
+	// NOTE MAPPING DATA-STRUCTURES
 	Map<String, Integer> note_mapper = null;
 	Map<Integer, String> reverse_note_mapper = null;
 	SoundDriver k2s = null;
 	
+	// MIDI SPECIFIC VARIABLES
+	Synthesizer synth = null;
+	MidiChannel[] m_channel = null;
+	Instrument[] instruments = null;
+
 	public Sound(SoundDriver k2s_) {
-		note_mapper = new HashMap<String, Integer>();
-		reverse_note_mapper = new HashMap<Integer, String>();
-		k2s = k2s_;
-		String f_name = "Notes/mapper.txt";
-		
-		// Read file to get note mappings (populate HashMaps)
-		try {
-			File file = new File(f_name);
-			FileReader f_reader = new FileReader(file);
-			BufferedReader b_reader = new BufferedReader(f_reader);
+
+		List<Thread> threads = new ArrayList<Thread>();
+
+		threads.add(new Thread(() -> {
+			note_mapper = new HashMap<String, Integer>();
+			reverse_note_mapper = new HashMap<Integer, String>();
+			k2s = k2s_;
+			String f_name = "Notes/mapper.txt";
+			
+			// Read file to get note mappings (populate HashMaps)
+			try {
+				File file = new File(f_name);
+				FileReader f_reader = new FileReader(file);
+				BufferedReader b_reader = new BufferedReader(f_reader);
+					
+				String row;
 				
-			String row;
-			
-			//col[0] = note #, col[1] = note_name
-			while((row = b_reader.readLine()) != null) {
-				String[] col = row.split(" ");
-				note_mapper.put(col[1], Integer.parseInt(col[0]));
-				reverse_note_mapper.put(Integer.parseInt(col[0]),col[1]);
+				//col[0] = note #, col[1] = note_name
+				while((row = b_reader.readLine()) != null) {
+					String[] col = row.split(" ");
+					note_mapper.put(col[1], Integer.parseInt(col[0]));
+					reverse_note_mapper.put(Integer.parseInt(col[0]),col[1]);
+				}
+				f_reader.close();
+				b_reader.close();
+				
+				// Initialize Midi Synthesizer and keyboards
+			} catch (Exception e) {e.printStackTrace();}
+		}));
+
+
+		threads.add(new Thread(()->{
+			try{
+				this.synth = MidiSystem.getSynthesizer();
+				this.m_channel = synth.getChannels();
+				this.instruments = synth.getAvailableInstruments();
+
+				print_instruments();
+			}catch(Exception e){ e.printStackTrace();}
+		}));
+		
+		try{
+
+			for (Thread t : threads){
+				t.start();
+				t.join();
 			}
-			f_reader.close();
-			b_reader.close();
-			
-		} catch (Exception e) {e.printStackTrace();}
+
+		}catch (Exception e){e.printStackTrace();}
+
+
 
 	}
 		
@@ -49,7 +83,7 @@ public class Sound implements Runnable
 	 * @param synth;		Synthesizer contains multiple channels.
 	 * */
 	
-	public static void change_instrument(Integer channel, Integer bank, Integer patch, Synthesizer synth) {
+	public void change_instrument(Integer channel, Integer bank, Integer patch) {
 		// NEED TO LOAD IF NEEDED
 		try {
 			Receiver rec = synth.getReceiver();
@@ -67,39 +101,41 @@ public class Sound implements Runnable
 	public void run() {
 
 		try {
-			Synthesizer synth = MidiSystem.getSynthesizer();
+			// Synthesizer synth = MidiSystem.getSynthesizer();
 			synth.open();
-			
-			MidiChannel[] m_channel = synth.getChannels();
+			// MidiChannel[] m_channel = synth.getChannels();
 		
-				System.out.println(k2s);
-				System.out.println(SoundDriver.buffer);
+			
+			while(true) {
+				SoundDriver.lock.lock();
+				while(k2s.peek() == null) 
+					SoundDriver.c_buffer.await();
 				
 				
-				while(true) {
-					SoundDriver.lock.lock();
-					while(k2s.peek() == null) 
-						SoundDriver.c_buffer.await();
+				String s = k2s.read();
+				SoundDriver.lock.unlock();
+				
+				m_channel[0].noteOn(this.note_mapper.get(s), 1000);
+			}
 					
-					
-					String s = k2s.read();
-					SoundDriver.lock.unlock();
-					
-					m_channel[0].noteOn(this.note_mapper.get(s), 1000);
-				}
-					
-			}catch (Exception e) { e.printStackTrace(); }			
+		}catch (Exception e) { e.printStackTrace(); }			
 		
 	}
 	
 
 	// FOR DEBUGGING
 
-	public static void print_dict(Map<?,?> m) {
+	public void print_dict(Map<?,?> m) {
 		for (Map.Entry<?,?> x : m.entrySet()){
 			String key = (String) x.getKey();
 			System.out.println(key + ":" + (Integer)x.getValue());
 		}
+	}
+
+	public void print_instruments(){
+		System.out.println("Total Instruments: " + instruments.length);
+		for (Instrument i : instruments)
+			System.out.println(i);
 	}
 
 }

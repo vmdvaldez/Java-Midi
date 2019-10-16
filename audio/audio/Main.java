@@ -28,3 +28,5 @@ public class Main {
  * - 
  *x
  */
+
+//VOIDING MAIN FUNCTION Constructor for sound is called twice when implemented this way -- everything is now under the GUI class
