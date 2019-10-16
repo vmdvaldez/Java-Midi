@@ -13,6 +13,8 @@ public class Sound implements Runnable
 	Map<String, Integer> note_mapper = null;
 	Map<Integer, String> reverse_note_mapper = null;
 	Map<String, Integer[]> inst_bank_preset = null;
+	List<String> instrument_names = null;
+
 	SoundDriver k2s = null;
 	
 	// MIDI SPECIFIC VARIABLES
@@ -54,6 +56,7 @@ public class Sound implements Runnable
 
 		threads.add(new Thread(()->{
 			inst_bank_preset = new HashMap<String, Integer[]>();
+			instrument_names = new ArrayList<String>();
 			try{
 				this.synth = MidiSystem.getSynthesizer();
 				this.m_channel = synth.getChannels();
@@ -75,11 +78,12 @@ public class Sound implements Runnable
 					System.out.println(i.getName());
 					System.out.println("bank #: " + bank_preset[0] + "\t" + "preset #: " + bank_preset[1]);
 
+					instrument_names.add(i.getName());
 					inst_bank_preset.put(i.getName(), bank_preset);
 				}
 
 				// print_inst_mapping();
-				
+
 			}catch(Exception e){ e.printStackTrace();}
 		}));
 		

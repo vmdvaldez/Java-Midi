@@ -50,7 +50,7 @@ public class Gui extends Application implements Runnable{
 
 		drop_down.setOnAction((event) -> {
 			// System.out.println(drop_down.getSelectionModel().getSelectedItem().getClass());
-			String s = drop_down.getSelectionModel().getSelectedItem().getClass().toString();
+			String s = drop_down.getSelectionModel().getSelectedItem().toString();
 			System.out.println(s);
 		});
 		
