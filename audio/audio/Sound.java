@@ -6,21 +6,22 @@ import java.util.*;
 
 
 
-
 public class Sound implements Runnable
 {
 	// NOTE MAPPING DATA-STRUCTURES
-	Map<String, Integer> note_mapper = null;
-	Map<Integer, String> reverse_note_mapper = null;
-	Map<String, Integer[]> inst_bank_preset = null;
-	List<String> instrument_names = null;
+	private Map<String, Integer> note_mapper = null;
+	private Map<Integer, String> reverse_note_mapper = null;
+	private Map<String, Integer[]> inst_bank_preset = null;
+	private List<String> instrument_names = null;
 
-	SoundDriver k2s = null;
+	private SoundDriver k2s = null;
 	
 	// MIDI SPECIFIC VARIABLES
-	Synthesizer synth = null;
-	MidiChannel[] m_channel = null;
-	Instrument[] instruments = null;
+	private Synthesizer synth = null;
+	private MidiChannel[] m_channel = null;
+	private Instrument[] instruments = null;
+
+	public List<String> get_instruments(){return this.instrument_names;}
 
 	public Sound(SoundDriver k2s_) {
 
@@ -63,8 +64,9 @@ public class Sound implements Runnable
 				this.instruments = synth.getAvailableInstruments();
 
 				print_instruments();
-				Integer[] bank_preset = new Integer[2];
+				
 				for (Instrument i : instruments){
+					Integer[] bank_preset = new Integer[2];
 					String [] parsed = i.toString().split(" ");
 					int index = 0;
 					for(String word : parsed){
@@ -109,6 +111,13 @@ public class Sound implements Runnable
 	 * @param synth;		Synthesizer contains multiple channels.
 	 * */
 	
+	public void change_instrument(String inst){
+		Integer[] bank_preset = inst_bank_preset.get(inst);
+		System.out.println(bank_preset[0] + bank_preset[1]);
+		change_instrument(0, bank_preset[0], bank_preset[1]);
+
+	}
+
 	public void change_instrument(Integer channel, Integer bank, Integer patch) {
 		// NEED TO LOAD IF NEEDED
 		try {
@@ -140,8 +149,19 @@ public class Sound implements Runnable
 				
 				String s = k2s.read();
 				SoundDriver.lock.unlock();
-				
-				m_channel[0].noteOn(this.note_mapper.get(s), 1000);
+				int note_num = this.note_mapper.get(s);
+				int velocity = 1000;
+
+
+				m_channel[0].noteOn(note_num, velocity);
+
+				new Thread(() ->{
+					try{
+						Thread.sleep(1000);
+						m_channel[0].noteOff(note_num, velocity);
+					}catch (Exception e){e.printStackTrace();}
+				}).start();
+
 			}
 					
 		}catch (Exception e) { e.printStackTrace(); }			

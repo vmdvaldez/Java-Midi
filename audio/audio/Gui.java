@@ -10,7 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.Group;
-import javafx.collections.ObservableList; 
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections; 
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.BorderPane;
 import javafx.geometry.Pos;
@@ -26,6 +27,8 @@ public class Gui extends Application implements Runnable{
 	// public Sound get_midi(){return this.midi;}
 
 	private void key_handler(KeyEvent event){keyboard.map2sound(event.getText());}
+
+	private void drop_down_key_handler(KeyEvent event){System.out.println(event.getText());}
 
 	private void drop_down_handler(ActionEvent event){
 		System.out.println("test");
@@ -45,14 +48,26 @@ public class Gui extends Application implements Runnable{
 
 		Text text = this.create_text(15, 0, 0, "Instrument: ");
 		ComboBox drop_down = new ComboBox();
-		drop_down.getItems().addAll("test1","test2","test3");
+		ObservableList <String> items = FXCollections.observableArrayList(midi.get_instruments());
+		drop_down.getItems().addAll(items);
 		drop_down.getSelectionModel().selectFirst();
+
+		// drop_down.setOnMousePressed((event) -> {
+		// 	System.out.println("TEST");
+		// });
+
+		// drop_down.setOnMouseReleased((event) ->{
+			
+		// });
 
 		drop_down.setOnAction((event) -> {
 			// System.out.println(drop_down.getSelectionModel().getSelectedItem().getClass());
 			String s = drop_down.getSelectionModel().getSelectedItem().toString();
 			System.out.println(s);
+			midi.change_instrument(s);
 		});
+
+		
 		
 		// add Text to Group and create scene
 		
@@ -80,7 +95,6 @@ public class Gui extends Application implements Runnable{
 		main.setTitle("Music Application");
 		main.setScene(scene);
 		main.show();
-
 
 		scene.addEventHandler(KeyEvent.KEY_PRESSED, this::key_handler);
 		
