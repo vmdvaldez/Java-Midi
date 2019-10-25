@@ -14,15 +14,11 @@ public class Keyboard  implements SoundDriver{
 	public String read() {return buffer.remove();}
 	public String peek() {return buffer.peek();}
 
+	public void disable_key_sound(String key){}
 
-	public void map2sound(String key)
-	{
-		lock.lock();
+	public static String key_to_note(String key){
 		String note = null;
-		System.out.println(buffer);
-		System.out.println(key);
 		switch(key) {
-		
 			case "a":
 				break;
 			case "b":
@@ -143,7 +139,17 @@ public class Keyboard  implements SoundDriver{
 			
 			default: break;
 		}
-		
+		return note;
+	}
+
+	public void map2sound(String key){
+		lock.lock();
+		String note = null;
+		System.out.println(buffer);
+		System.out.println(key);
+
+		note = key_to_note(key);
+
 		System.out.println(note);
 		
 		if(note != null)

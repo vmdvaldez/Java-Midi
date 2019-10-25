@@ -10,6 +10,7 @@ public class Sound implements Runnable
 {
 	// NOTE MAPPING DATA-STRUCTURES
 	private Map<String, Integer> note_mapper = null;
+	private Map<String, Boolean> note_status = null;
 	private Map<Integer, String> reverse_note_mapper = null;
 	private Map<String, Integer[]> inst_bank_preset = null;
 	private List<String> instrument_names = null;
@@ -30,6 +31,7 @@ public class Sound implements Runnable
 		threads.add(new Thread(() -> {
 			note_mapper = new HashMap<String, Integer>();
 			reverse_note_mapper = new HashMap<Integer, String>();
+			note_status = new HashMap<String, Boolean>();
 			k2s = k2s_;
 			String f_name = "Notes/mapper.txt";
 			
@@ -46,6 +48,7 @@ public class Sound implements Runnable
 					String[] col = row.split(" ");
 					note_mapper.put(col[1], Integer.parseInt(col[0]));
 					reverse_note_mapper.put(Integer.parseInt(col[0]),col[1]);
+					note_status.put(col[1], false);
 				}
 				f_reader.close();
 				b_reader.close();
@@ -97,12 +100,14 @@ public class Sound implements Runnable
 			}
 
 		}catch (Exception e){e.printStackTrace();}
-
-
-
+		
+		Properties props = System.getProperties();
+		props.setProperty("javax.sound.midi.Synthesizer", "com.sun.media.sound.MixerSynth");
 	}
 		
-
+	public void set_note_status(String note, Boolean b){
+		this.note_status.replace(note, b);
+	}
 	
 	/**
 	 * @param channel;		each channel has an instrument, note, velocity, pitch ... etc.
@@ -115,7 +120,6 @@ public class Sound implements Runnable
 		Integer[] bank_preset = inst_bank_preset.get(inst);
 		System.out.println(bank_preset[0] + bank_preset[1]);
 		change_instrument(0, bank_preset[0], bank_preset[1]);
-
 	}
 
 	public void change_instrument(Integer channel, Integer bank, Integer patch) {
@@ -146,18 +150,23 @@ public class Sound implements Runnable
 				while(k2s.peek() == null) 
 					SoundDriver.c_buffer.await();
 				
-				
 				String s = k2s.read();
 				SoundDriver.lock.unlock();
+
+				if(this.note_status.get(s))
+					continue;
+
 				int note_num = this.note_mapper.get(s);
 				int velocity = 1000;
 
+				this.note_status.replace(s, true);
 
 				m_channel[0].noteOn(note_num, velocity);
 
 				new Thread(() ->{
 					try{
-						Thread.sleep(1000);
+						while(this.note_status.get(s));
+						// Thread.sleep(500);
 						m_channel[0].noteOff(note_num, velocity);
 					}catch (Exception e){e.printStackTrace();}
 				}).start();

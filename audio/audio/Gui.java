@@ -26,7 +26,11 @@ public class Gui extends Application implements Runnable{
 	// public Keyboard get_keyboard(){return this.keyboard;}
 	// public Sound get_midi(){return this.midi;}
 
-	private void key_handler(KeyEvent event){keyboard.map2sound(event.getText());}
+	private void key_press_handler(KeyEvent event){keyboard.map2sound(event.getText());}
+	private void key_release_handler(KeyEvent event){
+		String note = Keyboard.key_to_note(event.getText());
+		midi.set_note_status(note, false);
+	}
 
 	private void drop_down_key_handler(KeyEvent event){System.out.println(event.getText());}
 
@@ -96,7 +100,8 @@ public class Gui extends Application implements Runnable{
 		main.setScene(scene);
 		main.show();
 
-		scene.addEventHandler(KeyEvent.KEY_PRESSED, this::key_handler);
+		scene.addEventHandler(KeyEvent.KEY_PRESSED, this::key_press_handler);
+		scene.addEventHandler(KeyEvent.KEY_RELEASED, this::key_release_handler);
 		
 
 
@@ -110,3 +115,7 @@ public class Gui extends Application implements Runnable{
 		launch();
 	}
 }
+
+/*
+-	ADD KEY_PRESSED TOGGLE VARIABLE INSTEAD OF BUFFER?
+*/
