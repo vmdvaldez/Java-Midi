@@ -105,7 +105,7 @@ public class Gui extends Application implements Runnable{
 		
 
 
-	}
+}	
 
 	public void run(){
 		launch();

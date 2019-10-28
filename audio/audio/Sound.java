@@ -118,7 +118,8 @@ public class Sound implements Runnable
 	
 	public void change_instrument(String inst){
 		Integer[] bank_preset = inst_bank_preset.get(inst);
-		System.out.println(bank_preset[0] + bank_preset[1]);
+		System.out.println("Bank #: " + Integer.toString(bank_preset[0]));
+		System.out.println("Preset #: " + Integer.toString(bank_preset[1]));
 		change_instrument(0, bank_preset[0], bank_preset[1]);
 	}
 
