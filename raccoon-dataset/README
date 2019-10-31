@@ -1,0 +1,11 @@
+### Convert XML to CSV
+
+READ code
+
+### Generate TFRecord from CSV
+
+Example:
+
+$ python generate_tfrecord.py --csv_input=screwdriver_data/train_labels.csv --output_path=screwdriver_data/train.record
+
+

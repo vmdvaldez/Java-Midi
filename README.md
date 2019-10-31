@@ -58,7 +58,7 @@ pip install tensorflow-gpu==1.15.*  # GPU
 pip install pillow Cython lxml jupyter matplotlib
 
 
-### Object detection model
+### Object detection model (Note always need to run these commands to be able to avoid module errors)
 
 git clone https://github.com/tensorflow/models.git
 
@@ -79,6 +79,20 @@ sudo pip install lxml
 make qt4py2
 sudo python labelImg.py
 
+### Using Pre-trained model (customizing to allow symbol detection?)
+
+Find config file under tensor flow github page for different models (<tensor-flow>object_detection/samples/configs/*.config) the choice varies depending on the wanted model
+
+Download the model file assocatied with config file you've chosen. (it's a tar file must untar i.e. tar -xvf <file-name>)
+	- this can be found under g3doc folder markdown file.
+
+you must change the .record file for personal/custom use of the model chosen.
+
+# Workaround when training, it may use all your GPU's memory that may lead to ERRORS
+
+add after session_config = tf.ConfigProto(...) in training.py
+`session_config.gpu_options.per_process_gpu_memory_fraction = 0.8`
+
 
 
 ## References
@@ -87,3 +101,5 @@ sudo python labelImg.py
 -	https://www.tensorflow.org/install/gpu		(Installing CUDA)
 -	https://github.com/tensorflow/tensorflow	(Installin Tensor-flow)	
 - 	https://github.com/tzutalin/labelImg		(Installing LabelIMG)
+-	https://medium.com/coinmonks/tensorflow-object-detection-with-custom-objects-34a2710c6de5
+-	https://pythonprogramming.net/training-custom-objects-tensorflow-object-detection-api-tutorial/?completed=/creating-tfrecord-files-tensorflow-object-detection-api-tutorial/
